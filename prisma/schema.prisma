@@ -15,5 +15,7 @@ datasource db {
 
 model todo {
   id Int @id @default(autoincrement())
+  name String @db.VarChar(50)
   description String @db.Text()
+  title     String   @db.VarChar(255)
 }

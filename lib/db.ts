@@ -21,8 +21,3 @@ export async function createTodo(name:string, description: string, title:string)
         },
     });
 }
-
-export async function getOneTodo(){
- const data = await prisma.todo.findOne();
-    return data;
-}

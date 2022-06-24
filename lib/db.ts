@@ -21,3 +21,11 @@ export async function createTodo(name:string, description: string, title:string)
         },
     });
 }
+
+export async function deleteTodo(id:number){
+    await prisma.todo.delete({
+        where: {
+            id,
+        },
+    });
+}

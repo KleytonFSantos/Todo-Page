@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-
 export default function Modal() {
 
   const [showModal, setShowModal] = useState(false);
@@ -8,18 +7,18 @@ export default function Modal() {
   const [description, setDescription] = useState('');
   const [title, setTitle] = useState('');
 
-  const handleAdd = async () => {
-         
-         await fetch("/api/todo", {
-            method: "POST",
-            body: JSON.stringify({
-                name,
-                description,
-                title,
-          })
-        })
 
-        setShowModal(false);
+   const addTask  = async () => {
+   await fetch("/api/createTodos", {
+      method: "POST",
+      body: JSON.stringify({
+          name,
+          description,
+          title,
+    })
+  })
+  window.location.reload();
+  setShowModal(false);
   };
 
 
@@ -53,7 +52,6 @@ export default function Modal() {
                     </span>
                   </button>
                 </div>
-                {/*body*/}
                 <div className="relative p-6 flex-auto">
                  <form className="w-full max-w-lg">
                     <div className="flex flex-wrap -mx-3 mb-6">
@@ -96,7 +94,6 @@ export default function Modal() {
                     </div>
                  </form>
                 </div>
-                {/*footer*/}
                 <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
                   <button
                     className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
@@ -108,7 +105,7 @@ export default function Modal() {
                   <button
                     className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                     type="submit"
-                    onClick={() => handleAdd()}
+                    onClick={() => addTask()}
                   >
                     Adicionar
                   </button>

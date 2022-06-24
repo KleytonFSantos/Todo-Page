@@ -2,6 +2,8 @@ import { GetServerSideProps } from "next";
 import { getAllTodos, Todo } from "../lib/db";
 import Header from '../components/Header';
 import Modal from "../components/Modal";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 
 export const getServerSideProps: GetServerSideProps = async () => 
 {
@@ -17,10 +19,31 @@ interface PostProps {
   todos: Todo[];
 }
 
+//delete todos 
+export const deleteTodo = async (id: number) => {
+   console.log("delete todos", id);
+    await fetch(`/api/deleteTodos/${id}`, {
+        method: "DELETE",
+    })
+}
+
+
+
   const Home = ({ todos }: PostProps) => {
+    const [issues, setIssues] = useState<any[]>([]);
+
+    useEffect(() => {
+        fetch(`https://api.github.com/repos/KleytonFSantos/Todo-Page/issues`)
+        .then((response) => response.json())
+        .then((data) => {
+            setIssues(data)
+    })}, []);
+
+    
   return (
     <>
     <Header />  
+
     <div className="container mx-auto px-4 sm:px-8 max-w-5xl">
         <div className="py-8">
             <div className="flex flex-row mb-1 sm:mb-0 justify-between w-full">
@@ -30,7 +53,7 @@ interface PostProps {
                 <div className="text-end">
                     <form className="flex flex-col md:flex-row w-3/4 md:w-full max-w-sm md:space-x-3 space-y-3 md:space-y-0 justify-center">
                         <div className=" relative ">
-                            <input type="text" id="&quot;form-subscribe-Filter" className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent" placeholder="Nome"/>
+                            <input type="text" className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent" placeholder="Nome"/>
                             </div>
                             <button className="flex-shrink-0 px-4 py-2 text-base font-semibold text-white bg-purple-600 rounded-lg shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-purple-200" type="submit">
                                 Filtrar
@@ -60,13 +83,15 @@ interface PostProps {
                                 </tr>
                             </thead>
                             <tbody>
-                                {todos.map((todo) => (
-                                <tr key={todo.id}>
+                                {issues.map((issue) => (
+                                    
+                                <tr key={issue.id}>
                                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                         <div className="flex items-center">
-                                            <div className="ml-3">
+                                            <div className="flex gap-2 items-center">
+                                                <Image alt="avatar_image" className=" rounded-full"  src={issue.user.avatar_url} width="80px" height="80px"/>
                                                 <p className="text-gray-900 text-base whitespace-no-wrap">
-                                                     <span className="text-gray-900">{todo.name}</span>
+                                                    <span className="text-gray-900">{issue.assignees[0].login}</span>
                                                     
                                                 </p>
                                             </div>
@@ -74,13 +99,13 @@ interface PostProps {
                                     </td>
                                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                         <p className="text-gray-900 text-base whitespace-no-wrap">
-                                        <span className="text-gray-900">{todo.description}</span>
+                                        <span className="text-gray-900">{issue.body}</span>
                                         
                                         </p>
                                     </td>
                                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                         <p className="text-gray-900 text-base whitespace-no-wrap">
-                                       <span className="text-gray-900">{todo.title}</span>
+                                       <span className="text-gray-900">Issue: {issue.number} - {issue.title} </span>
                                         
                                         </p>
                                     </td>
@@ -89,17 +114,21 @@ interface PostProps {
                                             <span aria-hidden="true" className="absolute inset-0 bg-green-200 opacity-50 rounded-full">
                                             </span>
                                             <span className="relative text-base">
-                                                active
+                                                {issue.state.toUpperCase()}
                                             </span>
                                         </span>
                                     </td>
                                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                        <a href="#" className="text-indigo-600 hover:text-indigo-900 text-base">
-                                            Editar
-                                        </a>
+                                        <button 
+                                        type="button" 
+                                        className="text-indigo-600 hover:text-indigo-900 text-base"
+                                        onClick={()=> deleteTodo(issue.id)}
+                                        >
+                                            Apagar
+                                        </button>
                                     </td>
                                 </tr>
-                                ))}
+                                ))}  
                             </tbody>
                         </table>
                         <div className="px-5 bg-white py-5 flex flex-col xs:flex-row items-center xs:justify-between">

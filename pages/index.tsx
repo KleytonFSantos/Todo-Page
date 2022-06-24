@@ -19,13 +19,7 @@ interface PostProps {
   todos: Todo[];
 }
 
-//delete todos 
-export const deleteTodo = async (id: number) => {
-   console.log("delete todos", id);
-    await fetch(`/api/deleteTodos/${id}`, {
-        method: "DELETE",
-    })
-}
+
 
 
 
@@ -78,8 +72,6 @@ export const deleteTodo = async (id: number) => {
                                     <th scope="col" className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-semibold">
                                         status
                                     </th>
-                                    <th scope="col" className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-semibold">
-                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -118,15 +110,7 @@ export const deleteTodo = async (id: number) => {
                                             </span>
                                         </span>
                                     </td>
-                                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                        <button 
-                                        type="button" 
-                                        className="text-indigo-600 hover:text-indigo-900 text-base"
-                                        onClick={()=> deleteTodo(issue.id)}
-                                        >
-                                            Apagar
-                                        </button>
-                                    </td>
+                                    
                                 </tr>
                                 ))}  
                             </tbody>

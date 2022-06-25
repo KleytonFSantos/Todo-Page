@@ -22,7 +22,7 @@ export default function Modal() {
       }, {
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer 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",
+        "Authorization": process.env.NEXT_PUBLIC_GITHUB_TOKEN,
       }
     });
   window.location.reload();

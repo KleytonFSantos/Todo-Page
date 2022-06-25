@@ -19,19 +19,15 @@ interface PostProps {
   todos: Todo[];
 }
 
+const Home = ({ todos }: PostProps) => {    
+const [issues, setIssues] = useState<any[]>([]);
 
+const url = "https://api.github.com/repos/KleytonFSantos/Todo-Page/issues";
 
-
-
-  const Home = ({ todos }: PostProps) => {
-    const [issues, setIssues] = useState<any[]>([]);
-    
-    const url = "https://api.github.com/repos/KleytonFSantos/Todo-Page/issues";
-    
-    useEffect(() => {
-        axios(url)
-        .then((response: AxiosResponse) => setIssues(response.data))        
-    }, []);
+useEffect(() => {
+    axios(url)
+    .then((response: AxiosResponse) => setIssues(response.data))        
+}, []);
 
     
   return (

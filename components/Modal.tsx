@@ -1,6 +1,5 @@
 import axios from "axios";
 import React, { useState } from "react";
-import process from "process";
 
 export default function Modal() {
 
@@ -23,7 +22,7 @@ export default function Modal() {
       }, {
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer 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",
+        "Authorization": "Bearer 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",
       }
     });
   window.location.reload();

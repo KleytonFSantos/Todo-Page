@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 
+
 export default function Modal() {
 
   const [showModal, setShowModal] = useState(false);
@@ -22,7 +23,7 @@ export default function Modal() {
       }, {
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer " + process.env.GITHUB_TOKEN,
+        "Authorization": process.env.NEXT_PUBLIC_GITHUB_TOKEN,
       }
     });
   window.location.reload();

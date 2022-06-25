@@ -3,6 +3,7 @@ declare global {
       interface ProcessEnv {
         GITHUB_TOKEN: string;
         NODE_ENV: 'development' | 'production';
+        NEXT_PUBLIC_GITHUB_TOKEN: string;
       }
     }
   }

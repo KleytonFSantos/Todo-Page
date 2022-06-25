@@ -1,9 +1,10 @@
 import { GetServerSideProps } from "next";
 import { getAllTodos, Todo } from "../lib/db";
+import { useEffect, useState } from "react";
 import Header from '../components/Header';
 import Modal from "../components/Modal";
-import { useEffect, useState } from "react";
 import Image from "next/image";
+import axios, { AxiosResponse } from "axios";
 
 export const getServerSideProps: GetServerSideProps = async () => 
 {
@@ -14,7 +15,6 @@ export const getServerSideProps: GetServerSideProps = async () =>
     },  
   };
 };
-
 interface PostProps {
   todos: Todo[];
 }
@@ -25,13 +25,13 @@ interface PostProps {
 
   const Home = ({ todos }: PostProps) => {
     const [issues, setIssues] = useState<any[]>([]);
-
+    
+    const url = "https://api.github.com/repos/KleytonFSantos/Todo-Page/issues";
+    
     useEffect(() => {
-        fetch(`https://api.github.com/repos/KleytonFSantos/Todo-Page/issues`)
-        .then((response) => response.json())
-        .then((data) => {
-            setIssues(data)
-    })}, []);
+        axios(url)
+        .then((response: AxiosResponse) => setIssues(response.data))        
+    }, []);
 
     
   return (

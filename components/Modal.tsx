@@ -1,4 +1,6 @@
+import axios from "axios";
 import React, { useState } from "react";
+import process from "process";
 
 export default function Modal() {
 
@@ -6,17 +8,24 @@ export default function Modal() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [title, setTitle] = useState('');
-
-
+  
+  const url = "https://api.github.com/repos/KleytonFSantos/Todo-Page/issues";
+    
+    
    const addTask  = async () => {
-   await fetch("/api/createTodos", {
-      method: "POST",
-      body: JSON.stringify({
-          name,
-          description,
-          title,
-    })
-  })
+    
+   await axios.post(url, {
+          title: title,
+          body: description,
+          assignees: [
+            name
+            ],
+      }, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer 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",
+      }
+    });
   window.location.reload();
   setShowModal(false);
   };

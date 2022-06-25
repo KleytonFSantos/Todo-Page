@@ -1,5 +1,5 @@
-import Icon from '../assets/Icon'
 import { Popover } from '@headlessui/react'
+import Icon from '../assets/Icon'
 
 export default function Example() {
   return (

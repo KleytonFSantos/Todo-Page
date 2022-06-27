@@ -1,10 +1,11 @@
 import { GetServerSideProps } from "next";
 import { getAllTodos, Todo } from "../lib/db";
-import { useEffect, useState } from "react";
+import { ReactEventHandler, useEffect, useState } from "react";
 import Header from '../components/Header';
 import Modal from "../components/Modal";
 import Image from "next/image";
 import axios, { AxiosResponse } from "axios";
+import ReactPaginate from "react-paginate";
 
 export const getServerSideProps: GetServerSideProps = async () => 
 {
@@ -15,13 +16,18 @@ export const getServerSideProps: GetServerSideProps = async () =>
     },  
   };
 };
-interface PostProps {
+interface IssueProps {
   todos: Todo[];
 }
 
-const Home = ({ todos }: PostProps) => {    
+const Home = ({ todos }: IssueProps) => {   
+const itemsPerPage = 4;
 const [issues, setIssues] = useState<any[]>([]);
 const [issueName, setIssueName] = useState('');
+const [currentItems, setCurrentItems] = useState<any[]>([]);
+const [pageCount, setPageCount] = useState(0);
+
+const [itemOffset, setItemOffset] = useState(0);
 
 const url = "https://api.github.com/repos/KleytonFSantos/Todo-Page/issues";
 
@@ -32,8 +38,22 @@ useEffect(() => {
 
 const lowerFilteredIssues = issueName.toLocaleLowerCase()
 
-const filteredIssues = issues.filter(issue => issue.title.toLowerCase().includes(lowerFilteredIssues));
-    
+const filteredIssues = currentItems.filter(issue => issue.title.toLowerCase().includes(lowerFilteredIssues));
+
+useEffect(() => {
+    const endOffset = itemOffset + itemsPerPage;
+    setCurrentItems(issues.slice(itemOffset, endOffset));
+    setPageCount(Math.ceil(issues.length / itemsPerPage));
+  }, [itemOffset, itemsPerPage, issues]);
+
+
+const handlePageClick = (e: any) => {
+    const newOffset = (e.selected * itemsPerPage) % issues.length;
+    setItemOffset(newOffset);
+};
+
+
+  
   return (
     <>
     <Header />  
@@ -54,7 +74,7 @@ const filteredIssues = issues.filter(issue => issue.title.toLowerCase().includes
                             value={issueName}
                             onChange={e => setIssueName(e.currentTarget.value)}
                             />
-                            </div>                                               
+                            </div>                                            
                         </form>
                     </div>
                 </div>
@@ -78,7 +98,8 @@ const filteredIssues = issues.filter(issue => issue.title.toLowerCase().includes
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredIssues.map((issue) => (                                    
+                            
+                            {filteredIssues.map((issue) => (                                    
                                 <tr key={issue.id}>
                                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                         <div className="flex items-center">
@@ -117,34 +138,21 @@ const filteredIssues = issues.filter(issue => issue.title.toLowerCase().includes
                                 ))}  
                             </tbody>
                         </table>
-                        <div className="px-5 bg-white py-5 flex flex-col xs:flex-row items-center xs:justify-between">
-                            <div className="flex items-center">
-                                <button type="button" className="w-full p-4 border text-base rounded-l-xl text-gray-600 bg-white hover:bg-gray-100">
-                                    <svg width="9" fill="currentColor" height="8" className="" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M1427 301l-531 531 531 531q19 19 19 45t-19 45l-166 166q-19 19-45 19t-45-19l-742-742q-19-19-19-45t19-45l742-742q19-19 45-19t45 19l166 166q19 19 19 45t-19 45z">
-                                        </path>
-                                    </svg>
-                                </button>
-                                <button type="button" className="w-full px-4 py-2 border-t border-b text-base text-indigo-500 bg-white hover:bg-gray-100 ">
-                                    1
-                                </button>
-                                <button type="button" className="w-full px-4 py-2 border text-base text-gray-600 bg-white hover:bg-gray-100">
-                                    2
-                                </button>
-                                <button type="button" className="w-full px-4 py-2 border-t border-b text-base text-gray-600 bg-white hover:bg-gray-100">
-                                    3
-                                </button>
-                                <button type="button" className="w-full px-4 py-2 border text-base text-gray-600 bg-white hover:bg-gray-100">
-                                    4
-                                </button>
-                                <button type="button" className="w-full p-4 border-t border-b border-r text-base  rounded-r-xl text-gray-600 bg-white hover:bg-gray-100">
-                                    <svg width="9" fill="currentColor" height="8" className="" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M1363 877l-742 742q-19 19-45 19t-45-19l-166-166q-19-19-19-45t19-45l531-531-531-531q-19-19-19-45t19-45l166-166q19-19 45-19t45 19l742 742q19 19 19 45t-19 45z">
-                                        </path>
-                                    </svg>
-                                </button>
-                                
-                            </div>
+                        <div className="px-5 bg-white py-5 flex flex-col text- xs:flex-row items-center xs:justify-between">                            
+                             <ReactPaginate
+                                breakLabel="..."
+                                nextLabel=">"
+                                onPageChange={handlePageClick}
+                                pageRangeDisplayed={5}
+                                pageCount={pageCount}
+                                previousLabel="<"
+                                renderOnZeroPageCount={null as any}
+                                containerClassName="flex items-center"
+                                pageLinkClassName="w-full px-4 py-2 border text-sm text-gray-600 bg-white hover:bg-gray-100"
+                                previousLinkClassName="w-full px-4 py-2 border-t border-b text-sm text-gray-600 bg-white hover:bg-gray-100 rounded-l-xl"
+                                nextLinkClassName="w-full px-4 py-2 border-t border-b text-sm text-gray-600 bg-white hover:bg-gray-100 rounded-r-xl"
+                                activeLinkClassName="w-full px-4 py-2 border-t border-b text-sm text-purple-600 bg-gray-50 hover:bg-gray-100 "                             
+                             />
                             <Modal />
                         </div>
                     </div>

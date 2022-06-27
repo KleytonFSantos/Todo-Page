@@ -24,6 +24,8 @@ const Home = () => {
         headers: {
         "Content-Type": "application/json",
         "Authorization": process.env.NEXT_PUBLIC_GITHUB_TOKEN,
+        "scope":"repo,gist",
+        "token_type":"bearer"
         }
         })
         .then((response: AxiosResponse) => setIssues(response.data))        

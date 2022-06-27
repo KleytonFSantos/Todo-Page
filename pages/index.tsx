@@ -64,7 +64,7 @@ const Home = () => {
                     <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
                          <table className="min-w-full leading-normal">
                             <TableHeader />          
-                            {filteredIssues.map((issue) => (   
+                            {filteredIssues?.map((issue) => (   
                                 <TableContent
                                 key={issue.id} 
                                 avatar={issue.user.avatar_url}

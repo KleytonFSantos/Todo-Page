@@ -20,7 +20,12 @@ const Home = () => {
     const url = "https://api.github.com/repos/KleytonFSantos/Todo-Page/issues";
 
     useEffect(() => {
-        axios(url)
+        axios(url, {
+        headers: {
+        "Content-Type": "application/json",
+        "Authorization": process.env.NEXT_PUBLIC_GITHUB_TOKEN,
+        }
+        })
         .then((response: AxiosResponse) => setIssues(response.data))        
     }, []);
 

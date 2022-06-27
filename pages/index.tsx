@@ -1,56 +1,41 @@
-import { GetServerSideProps } from "next";
-import { getAllTodos, Todo } from "../lib/db";
-import { ReactEventHandler, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Header from '../components/Header';
 import Modal from "../components/Modal";
 import Image from "next/image";
 import axios, { AxiosResponse } from "axios";
 import ReactPaginate from "react-paginate";
 
-export const getServerSideProps: GetServerSideProps = async () => 
-{
-  const todos = await getAllTodos();
-  return {
-    props: {
-      todos,
-    },  
-  };
-};
-interface IssueProps {
-  todos: Todo[];
-}
+const Home = () => {   
+    const itemsPerPage = 4;
+    const [issues, setIssues] = useState<any[]>([]);
+    const [issueNameFiltered, setIssueNameFiltered] = useState('');
+    const [currentItems, setCurrentItems] = useState<any[]>([]);
+    const [pageCount, setPageCount] = useState(0);
 
-const Home = ({ todos }: IssueProps) => {   
-const itemsPerPage = 4;
-const [issues, setIssues] = useState<any[]>([]);
-const [issueName, setIssueName] = useState('');
-const [currentItems, setCurrentItems] = useState<any[]>([]);
-const [pageCount, setPageCount] = useState(0);
+    const [itemOffset, setItemOffset] = useState(0);
 
-const [itemOffset, setItemOffset] = useState(0);
+    const url = "https://api.github.com/repos/KleytonFSantos/Todo-Page/issues";
 
-const url = "https://api.github.com/repos/KleytonFSantos/Todo-Page/issues";
+    useEffect(() => {
+        axios(url)
+        .then((response: AxiosResponse) => setIssues(response.data))        
+    }, []);
 
-useEffect(() => {
-    axios(url)
-    .then((response: AxiosResponse) => setIssues(response.data))        
-}, []);
+    const lowerFilteredIssues = issueNameFiltered.toLocaleLowerCase()
 
-const lowerFilteredIssues = issueName.toLocaleLowerCase()
+    const filteredIssues = currentItems.filter(issue => issue.title.toLowerCase().includes(lowerFilteredIssues));
 
-const filteredIssues = currentItems.filter(issue => issue.title.toLowerCase().includes(lowerFilteredIssues));
-
-useEffect(() => {
-    const endOffset = itemOffset + itemsPerPage;
-    setCurrentItems(issues.slice(itemOffset, endOffset));
-    setPageCount(Math.ceil(issues.length / itemsPerPage));
-  }, [itemOffset, itemsPerPage, issues]);
+    useEffect(() => {
+        const endOffset = itemOffset + itemsPerPage;
+        setCurrentItems(issues.slice(itemOffset, endOffset));
+        setPageCount(Math.ceil(issues.length / itemsPerPage));
+    }, [itemOffset, itemsPerPage, issues]);
 
 
-const handlePageClick = (e: any) => {
-    const newOffset = (e.selected * itemsPerPage) % issues.length;
-    setItemOffset(newOffset);
-};
+    const handlePageClick = (e: any) => {
+        const newOffset = (e.selected * itemsPerPage) % issues.length;
+        setItemOffset(newOffset);
+    };
 
 
   
@@ -66,14 +51,16 @@ const handlePageClick = (e: any) => {
                 </h2>
                 <div className="text-end">
                     <form className="flex flex-col md:flex-row w-3/4 md:w-full max-w-sm md:space-x-3 space-y-3 md:space-y-0 justify-center">
-                        <div className=" relative ">
-                            <input 
-                            type="text" 
-                            className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent" 
-                            placeholder="Digite o título da issue aqui..."
-                            value={issueName}
-                            onChange={e => setIssueName(e.currentTarget.value)}
-                            />
+                        <div className=" relative ">                            
+                             <label htmlFor="default-search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300">Search</label>
+                                <div className="relative">
+                                    <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+                                        <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                    </div>
+                                    <input type="search" id="default-search" className="block p-4 pl-10 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Digite o título da issue aqui..."
+                                    value={issueNameFiltered}
+                                    onChange={e => setIssueNameFiltered(e.currentTarget.value)} />                                   
+                                </div>
                             </div>                                            
                         </form>
                     </div>
@@ -89,16 +76,15 @@ const handlePageClick = (e: any) => {
                                     <th scope="col" className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800 text-left text-sm uppercase font-semibold">
                                         Descrição
                                     </th>
-                                    <th scope="col" className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-semibold">
-                                        Título/Issue
+                                    <th scope="col" className="flex gap-4 items-center px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-semibold">
+                                        Issue
                                     </th>
                                     <th scope="col" className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-semibold">
                                         status
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody>
-                            
+                            <tbody>                            
                             {filteredIssues.map((issue) => (                                    
                                 <tr key={issue.id}>
                                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
@@ -151,7 +137,7 @@ const handlePageClick = (e: any) => {
                                 pageLinkClassName="w-full px-4 py-2 border text-sm text-gray-600 bg-white hover:bg-gray-100"
                                 previousLinkClassName="w-full px-4 py-2 border-t border-b text-sm text-gray-600 bg-white hover:bg-gray-100 rounded-l-xl"
                                 nextLinkClassName="w-full px-4 py-2 border-t border-b text-sm text-gray-600 bg-white hover:bg-gray-100 rounded-r-xl"
-                                activeLinkClassName="w-full px-4 py-2 border-t border-b text-sm text-purple-600 bg-gray-50 hover:bg-gray-100 "                             
+                                activeLinkClassName="w-full px-4 py-2 border-t border-b text-sm text-purple-600 bg-gray-50 hover:bg-gray-100 "                            
                              />
                             <Modal />
                         </div>

@@ -11,7 +11,6 @@ export default function Modal() {
   
   const url = "https://api.github.com/repos/KleytonFSantos/Todo-Page/issues";
     
-    
    const addTask  = async () => {
     
    await axios.post(url, {

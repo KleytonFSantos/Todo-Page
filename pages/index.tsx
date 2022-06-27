@@ -6,6 +6,7 @@ import ReactPaginate from "react-paginate";
 import TableContent from "../components/TableContent";
 import TableHeader from "../components/TableHeader";
 import InputSearch from "../components/InputSearch";
+import Head from "next/head";
 
 const Home = () => {   
     const itemsPerPage = 4;
@@ -43,7 +44,11 @@ const Home = () => {
   
   return (
     <>
-    <Header />  
+        <Head>
+            <title>Todo-Page</title>
+            <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        </Head>
+        <Header />  
         <div className="container mx-auto px-4 sm:px-8 max-w-5xl">
             <div className="py-8">
                 <div className="flex flex-row mb-1 sm:mb-0 justify-between w-full">

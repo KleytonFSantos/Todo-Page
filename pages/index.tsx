@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { formatDistance } from "date-fns";
+import ptBR from 'date-fns/locale/pt-BR'
 import Header from '../components/Header';
 import Modal from "../components/Modal";
 import axios, { AxiosResponse } from "axios";
@@ -25,7 +27,6 @@ const Home = () => {
     }, []);
 
     const lowerFilteredIssues = issueNameFiltered.toLocaleLowerCase()
-
     const filteredIssues = currentItems.filter(issue => issue.title.toLowerCase().includes(lowerFilteredIssues));
 
     useEffect(() => {
@@ -68,11 +69,16 @@ const Home = () => {
                                 <TableContent
                                 key={issue.id} 
                                 avatar={issue.user.avatar_url}
-                                name={issue.assignees[0].login}
                                 description={issue.body}
                                 issueNumber={issue.number}
                                 issueTitle={issue.title}
-                                issueStatus={issue.state.toUpperCase()}                                
+                                issueStatus={issue.state.toUpperCase()}
+                                issueTime={`Criado ` + formatDistance(new Date(issue.created_at), new Date(), { 
+                                    addSuffix: true, 
+                                    locale: ptBR
+                                })}
+                                
+                                                            
                                 />                                 
                             ))}                              
                         </table>
@@ -90,7 +96,7 @@ const Home = () => {
                                 previousLinkClassName="w-full px-4 py-2 border-t border-b text-base text-gray-600 bg-white hover:bg-gray-100 rounded-l-xl"
                                 nextLinkClassName="w-full px-4 py-2 border-t border-b text-base text-gray-600 bg-white hover:bg-gray-100 rounded-r-xl"
                                 activeLinkClassName="w-full px-4 py-2 border-t border-b text-base text-purple-600 bg-gray-50 hover:bg-gray-100 "                            
-                             />
+                             />                             
                             <Modal />
                         </div>
                     </div>

@@ -25,9 +25,9 @@ const Home = () => {
         axios(url)
         .then((response: AxiosResponse) => setIssues(response.data))        
     }, []);
-
+    
     const lowerFilteredIssues = issueNameFiltered.toLocaleLowerCase()
-    const filteredIssues = currentItems.filter(issue => issue.title.toLowerCase().includes(lowerFilteredIssues));
+    const filteredIssues = issues.filter(issue => issue.title.toLowerCase().includes(lowerFilteredIssues));
 
     useEffect(() => {
         const endOffset = itemOffset + itemsPerPage;
@@ -65,7 +65,21 @@ const Home = () => {
                     <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
                          <table className="min-w-full leading-normal">
                             <TableHeader />          
-                            {filteredIssues?.map((issue) => (   
+                            {issueNameFiltered ? filteredIssues?.map((issue) => (   
+                                <TableContent
+                                key={issue.id} 
+                                avatar={issue.user.avatar_url}
+                                description={issue.body}
+                                issueNumber={issue.number}
+                                issueTitle={issue.title}
+                                issueStatus={issue.state.toUpperCase()}
+                                issueTime={`Criado ` + formatDistance(new Date(issue.created_at), new Date(), { 
+                                    addSuffix: true, 
+                                    locale: ptBR
+                                })}                                                                                            
+                                />                                
+                            )): 
+                            currentItems.map((issue) => (   
                                 <TableContent
                                 key={issue.id} 
                                 avatar={issue.user.avatar_url}
@@ -77,10 +91,9 @@ const Home = () => {
                                     addSuffix: true, 
                                     locale: ptBR
                                 })}
-                                
-                                                            
-                                />                                 
-                            ))}                              
+                                />
+                            ))}        
+                                                       
                         </table>
                         <div className="px-5 bg-white py-5 flex flex-col text- xs:flex-row items-center xs:justify-between">                            
                             <ReactPaginate
